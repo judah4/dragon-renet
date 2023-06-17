@@ -40,11 +40,11 @@ enum PacketSentInfo {
     // No need to track info for unreliable messages
     None,
     ReliableMessages {
-        channel_id: u8,
+        channel_id: u16,
         message_ids: Vec<u64>,
     },
     ReliableSliceMessage {
-        channel_id: u8,
+        channel_id: u16,
         message_id: u64,
         slice_index: usize,
     },
@@ -57,8 +57,8 @@ enum PacketSentInfo {
 
 #[derive(Debug)]
 enum ChannelOrder {
-    Reliable(u8),
-    Unreliable(u8),
+    Reliable(u16),
+    Unreliable(u16),
 }
 
 /// Describes the stats of a connection.
@@ -78,10 +78,10 @@ pub struct RenetClient {
     sent_packets: BTreeMap<u64, PacketSent>,
     pending_acks: Vec<Range<u64>>,
     channel_send_order: Vec<ChannelOrder>,
-    send_unreliable_channels: HashMap<u8, SendChannelUnreliable>,
-    receive_unreliable_channels: HashMap<u8, ReceiveChannelUnreliable>,
-    send_reliable_channels: HashMap<u8, SendChannelReliable>,
-    receive_reliable_channels: HashMap<u8, ReceiveChannelReliable>,
+    send_unreliable_channels: HashMap<u16, SendChannelUnreliable>,
+    receive_unreliable_channels: HashMap<u16, ReceiveChannelUnreliable>,
+    send_reliable_channels: HashMap<u16, SendChannelReliable>,
+    receive_reliable_channels: HashMap<u16, ReceiveChannelReliable>,
     stats: ConnectionStats,
     available_bytes_per_tick: u64,
     pub(crate) disconnect_reason: Option<DisconnectReason>,
@@ -252,7 +252,7 @@ impl RenetClient {
     }
 
     /// Send a message to the server over a channel.
-    pub fn send_message<I: Into<u8>, B: Into<Bytes>>(&mut self, channel_id: I, message: B) {
+    pub fn send_message<I: Into<u16>, B: Into<Bytes>>(&mut self, channel_id: I, message: B) {
         if self.is_disconnected() {
             return;
         }
@@ -270,7 +270,7 @@ impl RenetClient {
     }
 
     /// Receive a message from the server over a channel.
-    pub fn receive_message<I: Into<u8>>(&mut self, channel_id: I) -> Option<Bytes> {
+    pub fn receive_message<I: Into<u16>>(&mut self, channel_id: I) -> Option<Bytes> {
         if self.is_disconnected() {
             return None;
         }
@@ -685,7 +685,7 @@ mod tests {
     fn discard_old_packets() {
         let mut connection = RenetClient::new(ConnectionConfig::default());
         let message: Bytes = vec![5; 5].into();
-        connection.send_message(0, message);
+        connection.send_message(0u16, message);
 
         connection.get_packets_to_send();
         assert_eq!(connection.sent_packets.len(), 1);

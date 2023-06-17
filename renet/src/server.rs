@@ -150,7 +150,7 @@ impl RenetServer {
     }
 
     /// Send a message to all clients over a channel.
-    pub fn broadcast_message<I: Into<u8>, B: Into<Bytes>>(&mut self, channel_id: I, message: B) {
+    pub fn broadcast_message<I: Into<u16>, B: Into<Bytes>>(&mut self, channel_id: I, message: B) {
         let channel_id = channel_id.into();
         let message = message.into();
         for connection in self.connections.values_mut() {
@@ -159,7 +159,7 @@ impl RenetServer {
     }
 
     /// Send a message to all clients, except the specified one, over a channel.
-    pub fn broadcast_message_except<I: Into<u8>, B: Into<Bytes>>(&mut self, except_id: u64, channel_id: I, message: B) {
+    pub fn broadcast_message_except<I: Into<u16>, B: Into<Bytes>>(&mut self, except_id: u64, channel_id: I, message: B) {
         let channel_id = channel_id.into();
         let message = message.into();
         for (connection_id, connection) in self.connections.iter_mut() {
@@ -172,7 +172,7 @@ impl RenetServer {
     }
 
     /// Send a message to a client over a channel.
-    pub fn send_message<I: Into<u8>, B: Into<Bytes>>(&mut self, client_id: u64, channel_id: I, message: B) {
+    pub fn send_message<I: Into<u16>, B: Into<Bytes>>(&mut self, client_id: u64, channel_id: I, message: B) {
         match self.connections.get_mut(&client_id) {
             Some(connection) => connection.send_message(channel_id, message),
             None => log::error!("Tried to send a message to invalid client {:?}", client_id),
@@ -180,7 +180,7 @@ impl RenetServer {
     }
 
     /// Receive a message from a client over a channel.
-    pub fn receive_message<I: Into<u8>>(&mut self, client_id: u64, channel_id: I) -> Option<Bytes> {
+    pub fn receive_message<I: Into<u16>>(&mut self, client_id: u64, channel_id: I) -> Option<Bytes> {
         if let Some(connection) = self.connections.get_mut(&client_id) {
             return connection.receive_message(channel_id);
         }

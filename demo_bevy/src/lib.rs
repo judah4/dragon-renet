@@ -26,11 +26,13 @@ pub enum PlayerCommand {
     BasicAttack { cast_at: Vec3 },
 }
 
+#[repr(u16)]
 pub enum ClientChannel {
     Input,
     Command,
 }
 
+#[repr(u16)]
 pub enum ServerChannel {
     ServerMessages,
     NetworkedEntities,
@@ -50,7 +52,7 @@ pub struct NetworkedEntities {
     pub translations: Vec<[f32; 3]>,
 }
 
-impl From<ClientChannel> for u8 {
+impl From<ClientChannel> for u16 {
     fn from(channel_id: ClientChannel) -> Self {
         match channel_id {
             ClientChannel::Command => 0,
@@ -80,7 +82,7 @@ impl ClientChannel {
     }
 }
 
-impl From<ServerChannel> for u8 {
+impl From<ServerChannel> for u16 {
     fn from(channel_id: ServerChannel) -> Self {
         match channel_id {
             ServerChannel::NetworkedEntities => 0,

@@ -13,7 +13,7 @@ use crate::{
 
 #[derive(Debug)]
 pub struct SendChannelUnreliable {
-    channel_id: u8,
+    channel_id: u16,
     unreliable_messages: VecDeque<Bytes>,
     sliced_message_id: u64,
     max_memory_usage_bytes: usize,
@@ -22,7 +22,7 @@ pub struct SendChannelUnreliable {
 
 #[derive(Debug)]
 pub struct ReceiveChannelUnreliable {
-    channel_id: u8,
+    channel_id: u16,
     messages: VecDeque<Bytes>,
     slices: BTreeMap<u64, SliceConstructor>,
     slices_last_received: BTreeMap<u64, Duration>,
@@ -31,7 +31,7 @@ pub struct ReceiveChannelUnreliable {
 }
 
 impl SendChannelUnreliable {
-    pub fn new(channel_id: u8, max_memory_usage_bytes: usize) -> Self {
+    pub fn new(channel_id: u16, max_memory_usage_bytes: usize) -> Self {
         Self {
             channel_id,
             unreliable_messages: VecDeque::new(),
@@ -123,7 +123,7 @@ impl SendChannelUnreliable {
 }
 
 impl ReceiveChannelUnreliable {
-    pub fn new(channel_id: u8, max_memory_usage_bytes: usize) -> Self {
+    pub fn new(channel_id: u16, max_memory_usage_bytes: usize) -> Self {
         Self {
             channel_id,
             slices: BTreeMap::new(),

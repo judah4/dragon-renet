@@ -16,11 +16,11 @@ pub enum DisconnectReason {
     /// Failed to deserialize packet
     PacketDeserialization(SerializationError),
     /// Received message from channel with invalid id
-    ReceivedInvalidChannelId(u8),
+    ReceivedInvalidChannelId(u16),
     /// Error occurred in a send channel
-    SendChannelError { channel_id: u8, error: ChannelError },
+    SendChannelError { channel_id: u16, error: ChannelError },
     /// Error occurred in a receive channel
-    ReceiveChannelError { channel_id: u8, error: ChannelError },
+    ReceiveChannelError { channel_id: u16, error: ChannelError },
 }
 
 /// Possibles errors that can occur in a channel.

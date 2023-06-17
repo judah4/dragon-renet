@@ -29,7 +29,7 @@ enum UnackedMessage {
 
 #[derive(Debug)]
 pub struct SendChannelReliable {
-    channel_id: u8,
+    channel_id: u16,
     unacked_messages: BTreeMap<u64, UnackedMessage>,
     next_reliable_message_id: u64,
     resend_time: Duration,
@@ -72,7 +72,7 @@ impl UnackedMessage {
 }
 
 impl SendChannelReliable {
-    pub fn new(channel_id: u8, resend_time: Duration, max_memory_usage_bytes: usize) -> Self {
+    pub fn new(channel_id: u16, resend_time: Duration, max_memory_usage_bytes: usize) -> Self {
         Self {
             channel_id,
             unacked_messages: BTreeMap::new(),

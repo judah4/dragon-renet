@@ -19,25 +19,25 @@ pub enum Packet {
     // Small messages in a reliable channel are aggregated and sent in this packet
     SmallReliable {
         sequence: u64,
-        channel_id: u8,
+        channel_id: u16,
         messages: Vec<(u64, Bytes)>,
     },
     // Small messages in a unreliable channel are aggregated and sent in this packet
     SmallUnreliable {
         sequence: u64,
-        channel_id: u8,
+        channel_id: u16,
         messages: Vec<Bytes>,
     },
     // A big unreliable message is sliced in multiples slice packets
     UnreliableSlice {
         sequence: u64,
-        channel_id: u8,
+        channel_id: u16,
         slice: Slice,
     },
     // A big reliable messages is sliced in multiples slice packets
     ReliableSlice {
         sequence: u64,
-        channel_id: u8,
+        channel_id: u16,
         slice: Slice,
     },
     // Contains the packets that were acked
@@ -103,7 +103,7 @@ impl Packet {
             } => {
                 b.put_u8(0)?;
                 b.put_varint(*sequence)?;
-                b.put_u8(*channel_id)?;
+                b.put_u16(*channel_id)?;
                 b.put_u16(messages.len() as u16)?;
                 for (message_id, message) in messages {
                     b.put_varint(*message_id)?;
@@ -118,7 +118,7 @@ impl Packet {
             } => {
                 b.put_u8(1)?;
                 b.put_varint(*sequence)?;
-                b.put_u8(*channel_id)?;
+                b.put_u16(*channel_id)?;
                 b.put_u16(messages.len() as u16)?;
                 for message in messages {
                     b.put_varint(message.len() as u64)?;
@@ -132,7 +132,7 @@ impl Packet {
             } => {
                 b.put_u8(2)?;
                 b.put_varint(*sequence)?;
-                b.put_u8(*channel_id)?;
+                b.put_u16(*channel_id)?;
                 b.put_varint(slice.message_id)?;
                 b.put_varint(slice.slice_index as u64)?;
                 b.put_varint(slice.num_slices as u64)?;
@@ -146,7 +146,7 @@ impl Packet {
             } => {
                 b.put_u8(3)?;
                 b.put_varint(*sequence)?;
-                b.put_u8(*channel_id)?;
+                b.put_u16(*channel_id)?;
                 b.put_varint(slice.message_id)?;
                 b.put_varint(slice.slice_index as u64)?;
                 b.put_varint(slice.num_slices as u64)?;
@@ -211,7 +211,7 @@ impl Packet {
             0 => {
                 // SmallReliable
                 let sequence = b.get_varint()?;
-                let channel_id = b.get_u8()?;
+                let channel_id = b.get_u16()?;
                 let messages_len = b.get_u16()?;
                 let mut messages: Vec<(u64, Bytes)> = Vec::with_capacity(64);
                 for _ in 0..messages_len {
@@ -230,7 +230,7 @@ impl Packet {
             1 => {
                 // SmallUnreliable
                 let sequence = b.get_varint()?;
-                let channel_id = b.get_u8()?;
+                let channel_id = b.get_u16()?;
                 let messages_len = b.get_u16()?;
                 let mut messages: Vec<Bytes> = Vec::with_capacity(64);
                 for _ in 0..messages_len {
@@ -247,7 +247,7 @@ impl Packet {
             2 => {
                 // ReliableSlice
                 let sequence = b.get_varint()?;
-                let channel_id = b.get_u8()?;
+                let channel_id = b.get_u16()?;
                 let message_id = b.get_varint()?;
                 let slice_index = b.get_varint()? as usize;
                 let num_slices = b.get_varint()? as usize;
@@ -280,7 +280,7 @@ impl Packet {
             3 => {
                 // UnreliableSlice
                 let sequence = b.get_varint()?;
-                let channel_id = b.get_u8()?;
+                let channel_id = b.get_u16()?;
                 let message_id = b.get_varint()?;
                 let slice_index = b.get_varint()? as usize;
                 let num_slices = b.get_varint()? as usize;

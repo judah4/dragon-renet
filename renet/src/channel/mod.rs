@@ -27,7 +27,7 @@ pub enum SendType {
 pub struct ChannelConfig {
     /// Channel identifier, must be unique within its own list,
     /// but it can be repeated between the server and client lists.
-    pub channel_id: u8,
+    pub channel_id: u16,
     /// Maximum number of bytes that the channel may hold without acknowledgement of messages before becoming full.
     /// Unreliable channels will drop new messages when this value is reached
     /// Reliable channels will cause a disconnect when this value is reached
@@ -44,7 +44,7 @@ pub enum DefaultChannel {
     ReliableUnordered,
 }
 
-impl From<DefaultChannel> for u8 {
+impl From<DefaultChannel> for u16 {
     fn from(channel: DefaultChannel) -> Self {
         match channel {
             DefaultChannel::Unreliable => 0,
